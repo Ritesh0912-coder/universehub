@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google"
 import AzureADProvider from "next-auth/providers/azure-ad"
 
 export const authOptions: NextAuthOptions = {
+    secret: process.env.NEXTAUTH_SECRET || "dev-secret-please-change-in-production",
     adapter: PrismaAdapter(db),
     providers: [
         CredentialsProvider({
