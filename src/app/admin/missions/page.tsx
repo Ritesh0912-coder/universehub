@@ -13,6 +13,8 @@ import { Plus, Rocket } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminMissionsPage() {
     const missions = await db.mission.findMany({
         orderBy: { launchDate: "asc" },

@@ -11,6 +11,8 @@ import {
 import { Shield, User } from "lucide-react";
 import { format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminUsersPage() {
     const users = await db.user.findMany({
         orderBy: { createdAt: "desc" },
@@ -48,7 +50,7 @@ export default async function AdminUsersPage() {
                                 <TableCell className="text-gray-400">{user.email}</TableCell>
                                 <TableCell>
                                     <span className={`px-2 py-1 rounded text-xs font-bold flex items-center w-fit gap-1 ${user.role === 'ADMIN' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
-                                            'bg-gray-500/20 text-gray-400'
+                                        'bg-gray-500/20 text-gray-400'
                                         }`}>
                                         {user.role === 'ADMIN' && <Shield className="w-3 h-3" />}
                                         {user.role}

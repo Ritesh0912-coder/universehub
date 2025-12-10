@@ -13,6 +13,8 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminNewsPage() {
     const news = await db.news.findMany({
         orderBy: { publishedAt: "desc" },
