@@ -50,8 +50,8 @@ export const authOptions: NextAuthOptions = {
             }
         }),
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || "mock_google_id",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock_google_secret",
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             allowDangerousEmailAccountLinking: true,
         }),
         AzureADProvider({
