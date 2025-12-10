@@ -49,14 +49,14 @@ export const authOptions: NextAuthOptions = {
             }
         }),
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            clientId: process.env.GOOGLE_CLIENT_ID || "mock_google_id",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "mock_google_secret",
             allowDangerousEmailAccountLinking: true,
         }),
         AzureADProvider({
-            clientId: process.env.AZURE_AD_CLIENT_ID!,
-            clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-            tenantId: process.env.AZURE_AD_TENANT_ID,
+            clientId: process.env.AZURE_AD_CLIENT_ID || "mock_azure_id",
+            clientSecret: process.env.AZURE_AD_CLIENT_SECRET || "mock_azure_secret",
+            tenantId: process.env.AZURE_AD_TENANT_ID || "mock_tenant_id",
             allowDangerousEmailAccountLinking: true,
         }),
     ],
