@@ -31,7 +31,15 @@ export default function NewsList() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {news.map((article: any) => (
                     <div key={article.id} className="h-full">
-                        <NewsCard article={article} />
+                        <NewsCard news={{
+                            id: `ext-${article.id}`,
+                            title: article.title,
+                            summary: article.summary,
+                            imageUrl: article.image_url,
+                            source: article.news_site,
+                            publishedAt: article.published_at,
+                            url: article.url
+                        }} />
                     </div>
                 ))}
             </div>
