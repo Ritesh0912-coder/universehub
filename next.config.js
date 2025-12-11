@@ -19,7 +19,9 @@ const nextConfig = {
             { hostname: 'img.youtube.com' },
             { hostname: 'www.esa.int' },
             { hostname: 'spacepolicyonline.com' },
-            { hostname: 'spaceflightnow.com' }
+            { hostname: 'spaceflightnow.com' },
+            { hostname: 'europeanspaceflight.com' },
+            { hostname: 'thespacedevs-dev.nyc3.digitaloceanspaces.com' }
         ]
     },
     experimental: {

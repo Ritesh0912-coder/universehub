@@ -36,6 +36,9 @@ export default async function AdminLayout({
                     <Link href="/admin/missions" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors">
                         Missions
                     </Link>
+                    <Link href="/admin/launches" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors">
+                        Launch Calendar
+                    </Link>
                     <Link href="/admin/users" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors">
                         Personnel
                     </Link>

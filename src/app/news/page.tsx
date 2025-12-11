@@ -8,73 +8,95 @@ export const metadata = {
 };
 
 import { db } from "@/lib/db";
+import { Search } from "lucide-react";
+import { getBlacklist } from "@/lib/actions";
 
 export const dynamic = 'force-dynamic';
-
-// ... imports
 
 export default async function NewsPage({
     searchParams,
 }: {
-    searchParams: { search?: string };
+    searchParams: { q?: string; category?: string };
 }) {
-    // 1. Fetch from Database (UniverseHub Exclusive)
+    // 1. Fetch Local News
     const dbNews = await db.news.findMany({
-        take: 10,
-        orderBy: { publishedAt: 'desc' }
+        orderBy: { publishedAt: "desc" },
+        include: { author: true }
     });
 
-    // 2. Fetch from External API
+    // 2. Fetch External News (Spaceflight News API)
     const apiData = await getSpaceNews(20);
 
-    // 3. Normalize Data
+    // 3. Fetch Blacklist
+    const hiddenIds = await getBlacklist("NEWS");
+
+    // 4. Normalize Data
     const localNews = dbNews.map(item => ({
-        id: `local-${item.id}`,
+        id: item.id,
         title: item.title,
-        summary: item.summary || item.content.substring(0, 150) + "...",
-        image_url: item.imageUrl || "/images/news-placeholder.jpg",
-        published_at: item.publishedAt.toISOString(),
-        url: `/news/${item.id}`, // Internal link
-        news_site: item.source || "UniverseHub",
+        summary: item.summary,
+        imageUrl: item.imageUrl,
+        source: "UniverseHub",
+        publishedAt: item.publishedAt,
+        url: `/news/${item.id}`,
         isLocal: true
     }));
 
     const externalNews = apiData.results.map((item: any) => ({
-        ...item,
+        id: `ext-${item.id}`,
+        title: item.title,
+        summary: item.summary,
+        imageUrl: item.image_url,
+        source: item.news_site,
+        publishedAt: new Date(item.published_at),
+        url: item.url,
         isLocal: false
     }));
 
-    // 4. Merge
-    const allNews = [...localNews, ...externalNews];
+    // 5. Merge, Filter & Sort
+    let allNews = [...localNews, ...externalNews]
+        .filter(item => !hiddenIds.includes(item.id))
+        .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 
-    // 5. Filter
-    const filteredNews = searchParams.search
-        ? allNews.filter((article: any) =>
-            article.title.toLowerCase().includes(searchParams.search!.toLowerCase()) ||
-            article.summary.toLowerCase().includes(searchParams.search!.toLowerCase())
-        )
-        : allNews;
+    // 6. Filter by Search Query
+    const query = searchParams.q?.toLowerCase();
+    if (query) {
+        allNews = allNews.filter(item =>
+            item.title.toLowerCase().includes(query) ||
+            item.summary.toLowerCase().includes(query)
+        );
+    }
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto">
-            <div className="text-center mb-8">
+            <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-6xl font-bold font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">
-                    Space News
+                    Daily Transmissions
                 </h1>
                 <p className="text-gray-400 text-lg">
-                    Daily updates from the final frontier.
+                    Latest updates from across the cosmos.
                 </p>
             </div>
 
-            <NewsFilter />
+            {/* Search Bar */}
+            <div className="max-w-md mx-auto mb-12 relative">
+                <input
+                    type="text"
+                    placeholder="Search transmissions..."
+                    className="w-full bg-black/40 border border-white/10 rounded-full py-3 px-12 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            </div>
 
+            {/* News Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredNews.map((article: any) => (
-                    <NewsCard key={article.id} article={article} />
+                {allNews.map((news) => (
+                    <NewsCard key={news.id} news={news} />
                 ))}
-                {filteredNews.length === 0 && (
-                    <div className="col-span-full text-center py-20 text-gray-500">
-                        No transmissions found matching your query.
+
+                {allNews.length === 0 && (
+                    <div className="col-span-full text-center text-gray-500 py-12">
+                        No transmissions found matching your criteria.
                     </div>
                 )}
             </div>

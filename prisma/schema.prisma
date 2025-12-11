@@ -114,6 +114,7 @@ model Log {
   timestamp DateTime @default(now())
 }
 
+
 model Favorite {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
@@ -124,3 +125,11 @@ model Favorite {
   mission   Mission? @relation(fields: [missionId], references: [id])
   createdAt DateTime @default(now())
 }
+
+model Blacklist {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  externalId String   @unique
+  type       String   // "NEWS" or "LAUNCH"
+  createdAt  DateTime @default(now())
+}
+

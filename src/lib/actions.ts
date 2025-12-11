@@ -132,3 +132,41 @@ export async function updateUser(formData: FormData) {
     revalidatePath("/dashboard");
     redirect("/dashboard");
 }
+
+// --- BLACKLIST ACTIONS ---
+
+export async function hideExternalResource(externalId: string, type: string) {
+    if (!externalId || !type) return;
+
+    // Check if already blacklisted
+    // @ts-ignore
+    const existing = await db.blacklist.findUnique({
+        where: { externalId },
+    });
+
+    if (!existing) {
+        // @ts-ignore
+        await db.blacklist.create({
+            data: {
+                externalId,
+                type,
+            }
+        });
+    }
+
+    // Revalidate everything
+    revalidatePath("/");
+    revalidatePath("/news");
+    revalidatePath("/launches");
+    revalidatePath("/admin/news");
+    revalidatePath("/admin/launches");
+}
+
+export async function getBlacklist(type: string) {
+    // @ts-ignore
+    const list = await db.blacklist.findMany({
+        where: { type },
+        select: { externalId: true }
+    });
+    return list.map((item: { externalId: string }) => item.externalId);
+}

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StarBackground from "@/components/StarBackground";
 import Providers from "@/components/Providers";
+import GoogleAdSense from "@/components/GoogleAdSense";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${orbitron.variable} font-sans bg-space-black text-white`}>
+        <GoogleAdSense pId="ca-pub-1625470753290175" />
         <Providers>
           {/* Stars Background */}
           <StarBackground starCount={1000} speedFactor={0.2} />

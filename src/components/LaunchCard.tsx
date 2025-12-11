@@ -24,24 +24,46 @@ function getLaunchImage(launch: any) {
     }
 
     // 2. Try Rocket Specific Matches (Simple Text Search)
-    const rocketName = launch.rocket?.name?.toLowerCase() || "";
+    const rocketName = (typeof launch.rocket === 'string' ? launch.rocket : launch.rocket?.name || "").toLowerCase();
+
     if (rocketName.includes("starship")) return "https://images.unsplash.com/photo-1541185933-717852c42243?q=80&w=1000&auto=format&fit=crop";
     if (rocketName.includes("heavy")) return "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?q=80&w=2070&auto=format&fit=crop";
 
-    // 3. Deterministic Fallback based on Launch Name length (so it's consistent for the same launch)
+    // 3. Deterministic Fallback based on Launch Name length
     const index = (launch.name?.length || 0) % FALLBACK_IMAGES.length;
     return FALLBACK_IMAGES[index];
 }
 
 export default function LaunchCard({ launch }: LaunchCardProps) {
-    const launchDate = new Date(launch.date_unix * 1000);
-    const isUpcoming = launchDate > new Date();
+    // Determine Date
+    let launchDate = new Date();
+    if (launch.net) {
+        launchDate = new Date(launch.net);
+    } else if (launch.date_unix) {
+        launchDate = new Date(launch.date_unix * 1000);
+    }
 
-    // Determine Status Badge Color
-    const statusColor = isUpcoming ? "bg-blue-600" : launch.success ? "bg-green-600" : "bg-red-600";
-    const statusText = isUpcoming ? "UPCOMING" : launch.success ? "SUCCESS" : "FAILURE";
+    const isValidDate = !isNaN(launchDate.getTime());
+    const isUpcoming = isValidDate ? launchDate > new Date() : false;
 
-    const imageUrl = getLaunchImage(launch);
+    // Determine Status
+    // Global API returns launch.status as string (e.g. "Go"), SpaceX API returns boolean launch.success
+    let statusText = "UNKNOWN";
+    let statusColor = "bg-gray-600";
+
+    if (launch.status_name) {
+        statusText = launch.status_name.toUpperCase();
+        statusColor = statusText.includes("GO") || statusText.includes("SUCCESS") ? "bg-green-600" : "bg-yellow-600";
+    } else {
+        statusText = isUpcoming ? "UPCOMING" : launch.success ? "SUCCESS" : "FAILURE";
+        statusColor = isUpcoming ? "bg-blue-600" : launch.success ? "bg-green-600" : "bg-red-600";
+    }
+
+    // Extract Details
+    const rocketName = typeof launch.rocket === 'string' ? launch.rocket : launch.rocket?.name || "Rocket";
+    const padName = typeof launch.pad === 'string' ? launch.pad : (launch.launchpad?.name || launch.pad?.name || "Launchpad");
+    const details = launch.mission || launch.details || `Launch mission for ${rocketName}.`;
+    const imageUrl = launch.image || getLaunchImage(launch);
 
     return (
         <SpotlightCard className="h-full flex flex-col group p-0 border-white/10 bg-space-light/50 backdrop-blur-md overflow-hidden">
@@ -54,7 +76,7 @@ export default function LaunchCard({ launch }: LaunchCardProps) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-space-black/80 to-transparent" />
 
-                {/* Source/Provider Badge (Simulated with Status here) */}
+                {/* Status Badge */}
                 <span className={`absolute top-4 left-4 px-3 py-1 ${statusColor} text-xs font-bold rounded text-white shadow-lg backdrop-blur-sm`}>
                     {statusText}
                 </span>
@@ -74,18 +96,18 @@ export default function LaunchCard({ launch }: LaunchCardProps) {
                 </h3>
 
                 <p className="text-gray-400 text-sm mb-4 line-clamp-2">
-                    {launch.details || `Launch mission for ${launch.rocket?.name || 'Falcon 9'} carrying payload from ${launch.launchpad?.name || 'Cape Canaveral'}.`}
+                    {details}
                 </p>
 
                 {/* Details Grid */}
                 <div className="grid grid-cols-1 gap-2 text-xs text-gray-400 mb-6">
                     <div className="flex items-center gap-2">
                         <Rocket className="w-3 h-3 text-purple-400" />
-                        <span className="truncate">{launch.rocket?.name || "Falcon 9"}</span>
+                        <span className="truncate">{rocketName}</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <MapPin className="w-3 h-3 text-red-400" />
-                        <span className="truncate">{launch.launchpad?.name || "Cape Canaveral"}</span>
+                        <span className="truncate">{padName}</span>
                     </div>
                 </div>
 
@@ -93,7 +115,7 @@ export default function LaunchCard({ launch }: LaunchCardProps) {
                 <div className="flex items-center justify-between text-xs text-gray-500 mt-auto pt-4 border-t border-white/5 w-full">
                     <div className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {format(launchDate, "MMM d, yyyy")}
+                        {isValidDate ? format(launchDate, "MMM d, yyyy") : "TBD"}
                     </div>
                     <a
                         href={`https://www.google.com/search?q=${launch.name}+launch`}

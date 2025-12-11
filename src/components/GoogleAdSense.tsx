@@ -20,19 +20,23 @@ export default function GoogleAdSense({ pId, style, className, slot, format = "a
                 crossOrigin="anonymous"
                 strategy="lazyOnload"
             />
-            <ins
-                className="adsbygoogle"
-                style={{ display: "block", minWidth: "250px", ...style }}
-                data-ad-client={pId}
-                data-ad-slot={slot}
-                data-ad-format={format}
-                data-full-width-responsive={responsive}
-            />
-            <Script id="adsbygoogle-init" strategy="lazyOnload">
-                {`
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                `}
-            </Script>
+            {slot && (
+                <>
+                    <ins
+                        className="adsbygoogle"
+                        style={{ display: "block", minWidth: "250px", ...style }}
+                        data-ad-client={pId}
+                        data-ad-slot={slot}
+                        data-ad-format={format}
+                        data-full-width-responsive={responsive}
+                    />
+                    <Script id={`adsbygoogle-init-${slot}`} strategy="lazyOnload">
+                        {`
+                            (adsbygoogle = window.adsbygoogle || []).push({});
+                        `}
+                    </Script>
+                </>
+            )}
         </div>
     );
 }

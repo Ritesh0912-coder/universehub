@@ -1,22 +1,25 @@
-import { getUpcomingLaunches, getPastLaunches } from "@/lib/spacex";
+import { getGlobalUpcomingLaunches, getGlobalPastLaunches } from "@/lib/launch_service";
 import LaunchCard from "@/components/LaunchCard";
-// Tabs import removed
-// Using sections layout
-// I'll implementing a simple Client Component for Tabs OR just two sections.
-// Let's use two sections for simplicity to avoid creating complex UI lib components now.
+import { getBlacklist } from "@/lib/actions";
+
+export const dynamic = 'force-dynamic';
 
 export default async function LaunchesPage() {
-    const upcoming = await getUpcomingLaunches();
-    const past = await getPastLaunches();
+    const upcomingRaw = await getGlobalUpcomingLaunches();
+    const pastRaw = await getGlobalPastLaunches();
+    const hiddenIds = await getBlacklist("LAUNCH");
+
+    const upcoming = upcomingRaw.filter((l: any) => !hiddenIds.includes(l.id));
+    const past = pastRaw.filter((l: any) => !hiddenIds.includes(l.id));
 
     return (
         <div className="min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto">
             <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-6xl font-bold font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 mb-4">
-                    Launch Center
+                    Global Launch Center
                 </h1>
                 <p className="text-gray-400 text-lg">
-                    Countdown to the future.
+                    Tracking launches from SpaceX, NASA, ISRO, and beyond.
                 </p>
             </div>
 
@@ -27,7 +30,7 @@ export default async function LaunchesPage() {
                         {upcoming.map((launch: any) => (
                             <LaunchCard key={launch.id} launch={launch} />
                         ))}
-                        {upcoming.length === 0 && <p className="text-gray-500">No upcoming launches scheduled.</p>}
+                        {upcoming.length === 0 && <p className="text-gray-500">No upcoming launches scheduled found.</p>}
                     </div>
                 </section>
 

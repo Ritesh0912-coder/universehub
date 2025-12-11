@@ -3,7 +3,8 @@ import GlassCard from "@/components/ui/GlassCard";
 import GlassButton from "@/components/ui/GlassButton";
 import { getAPOD } from "@/lib/nasa";
 import { getSpaceNews } from "@/lib/news";
-import { getUpcomingLaunches } from "@/lib/spacex";
+import { getGlobalUpcomingLaunches } from "@/lib/launch_service";
+import { getBlacklist } from "@/lib/actions";
 import Link from "next/link";
 import { ArrowRight, Calendar, ExternalLink, Rocket, Globe } from "lucide-react";
 import Image from "next/image";
@@ -13,22 +14,35 @@ import GoogleAdSense from "@/components/GoogleAdSense";
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function Home() {
-  const apodData = await getAPOD();
-  const newsData = await getSpaceNews(3);
-  const launchesData = await getUpcomingLaunches();
-  const nextLaunches = launchesData.slice(0, 3);
+  const [apodData, newsData, nextLaunchesRaw, featuredMissions, hiddenNewsIds] = await Promise.all([
+    getAPOD(),
+    getSpaceNews(4),
+    getGlobalUpcomingLaunches(),
+    db.mission.findMany({
+      where: { status: "ACTIVE" },
+      take: 3
+    }),
+    getBlacklist("NEWS")
+  ]);
 
-  // Fetch featured missions
-  const missionData = await db.mission.findMany({
-    take: 3,
-    orderBy: { launchDate: 'asc' },
-    where: { status: { not: 'CANCELLED' } }
-  });
+  if (newsData.results) {
+    newsData.results = newsData.results.filter((item: any) => !hiddenNewsIds.includes(`ext-${item.id}`));
+  }
+
+  const nextLaunches = nextLaunchesRaw.slice(0, 3);
 
   return (
     <main className="min-h-screen bg-black text-white selection:bg-blue-500/30">
 
       <GlassHero />
+
+      {/* Ad Banner */}
+      <div className="mt-4 px-4 max-w-7xl mx-auto">
+        <div className="w-full flex justify-center">
+          {/* Note: Slot ID should be updated when you create a specific ad unit in AdSense */}
+          <GoogleAdSense pId="ca-pub-1625470753290175" slot="1234567890" format="auto" responsive="true" style={{ display: 'block', width: '100%', maxWidth: '728px', height: '90px', background: '#222' }} />
+        </div>
+      </div>
 
       {/* Main Content Grid */}
       <section className="max-w-7xl mx-auto px-4 pb-20">
@@ -60,9 +74,11 @@ export default async function Home() {
               ))}
             </div>
 
-            <GlassButton variant="outline" className="w-full mt-4 text-xs h-10">
-              Explore Archives
-            </GlassButton>
+            <Link href="/news" className="w-full mt-4">
+              <GlassButton variant="outline" className="w-full text-xs h-10">
+                Explore Archives
+              </GlassButton>
+            </Link>
           </GlassCard>
 
           {/* FEATURE STORIES / APOD - Span 5 */}
@@ -111,7 +127,7 @@ export default async function Home() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-white">{nextLaunches[0].name}</h3>
+                  <h3 className="text-lg font-bold text-white max-w-[200px] mx-auto leading-tight">{nextLaunches[0].name}</h3>
                   <p className="text-purple-300 text-sm font-mono mt-1">
                     {new Date(nextLaunches[0].window_start || nextLaunches[0].net).toLocaleDateString()}
                   </p>
