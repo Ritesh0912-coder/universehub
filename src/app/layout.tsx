@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} ${orbitron.variable} font-sans bg-space-black text-white`}>
-        <GoogleAdSense pId="ca-pub-1625470753290175" />
+        <GoogleAdSense pId="ca-pub-9930503261813762" />
         <Providers>
           {/* Stars Background */}
           <StarBackground starCount={1000} speedFactor={0.2} />

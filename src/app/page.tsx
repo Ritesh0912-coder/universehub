@@ -40,7 +40,7 @@ export default async function Home() {
       <div className="mt-4 px-4 max-w-7xl mx-auto">
         <div className="w-full flex justify-center">
           {/* Note: Slot ID should be updated when you create a specific ad unit in AdSense */}
-          <GoogleAdSense pId="ca-pub-1625470753290175" slot="1234567890" format="auto" responsive="true" style={{ display: 'block', width: '100%', maxWidth: '728px', height: '90px', background: '#222' }} />
+          <GoogleAdSense pId="ca-pub-9930503261813762" slot="1234567890" format="auto" responsive="true" style={{ display: 'block', width: '100%', maxWidth: '728px', height: '90px', background: '#222' }} />
         </div>
       </div>
 
