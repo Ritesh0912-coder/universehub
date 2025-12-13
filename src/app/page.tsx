@@ -16,7 +16,7 @@ export const revalidate = 3600; // Revalidate every hour
 export default async function Home() {
   const [apodData, newsData, nextLaunchesRaw, featuredMissions, hiddenNewsIds] = await Promise.all([
     getAPOD(),
-    getSpaceNews(4),
+    getSpaceNews(12),
     getGlobalUpcomingLaunches(),
     db.mission.findMany({
       where: { status: "ACTIVE" },
@@ -116,33 +116,42 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newsData.results.slice(0, 4).map((article: any) => (
-            <GlassCard key={article.id} className="group overflow-hidden flex flex-col h-full hover:border-blue-500/30 transition-all duration-300">
+          {newsData.results.slice(0, 12).map((article: any) => (
+            <GlassCard key={article.id} className="group overflow-hidden flex flex-col h-full hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] transition-all duration-300 bg-black/40 backdrop-blur-xl border-white/10">
               <div className="relative h-48 w-full overflow-hidden">
                 <Image
-                  src={article.image_url}
+                  src={article.image_url || "/images/placeholder-news.jpg"}
                   alt={article.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-60" />
-                <span className="absolute bottom-3 left-3 text-[10px] font-bold bg-blue-600/90 px-2 py-1 rounded text-white">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80" />
+                <span className="absolute bottom-3 left-3 text-[10px] font-bold bg-cyan-600/90 px-2 py-1 rounded text-white shadow-lg backdrop-blur-md border border-white/10">
                   {article.news_site}
                 </span>
               </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex items-center gap-2 mb-3 text-[10px] text-gray-400">
+              <div className="p-5 flex-1 flex flex-col relative">
+                {/* Decorative glow */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/10 rounded-bl-full -mr-10 -mt-10 blur-xl pointer-events-none group-hover:bg-cyan-500/20 transition-colors" />
+
+                <div className="flex items-center gap-2 mb-3 text-[10px] text-cyan-400 font-mono tracking-wider">
                   <Calendar className="w-3 h-3" />
-                  {new Date(article.published_at).toLocaleDateString()}
+                  {new Date(article.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                 </div>
-                <h3 className="text-lg font-bold text-white mb-3 leading-snug group-hover:text-blue-400 transition-colors line-clamp-3">
+
+                <h3 className="text-lg font-bold text-white mb-3 leading-snug group-hover:text-cyan-300 transition-colors line-clamp-3 font-orbitron">
                   {article.title}
                 </h3>
-                <p className="text-sm text-gray-400 line-clamp-3 mb-4 flex-1">
+
+                <p className="text-sm text-gray-400 line-clamp-3 mb-4 flex-1 font-light leading-relaxed">
                   {article.summary}
                 </p>
-                <Link href={article.url} target="_blank" className="flex items-center text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors mt-auto">
-                  READ FULL ARTICLE <ExternalLink className="w-3 h-3 ml-1" />
+
+                <Link href={article.url} target="_blank" className="flex items-center justify-between w-full mt-auto pt-4 border-t border-white/5 group/link">
+                  <span className="text-xs font-bold text-gray-300 group-hover/link:text-white transition-colors">READ ARTICLE</span>
+                  <div className="bg-white/5 p-1.5 rounded-full group-hover/link:bg-cyan-500 group-hover/link:text-black transition-all duration-300">
+                    <ExternalLink className="w-3 h-3" />
+                  </div>
                 </Link>
               </div>
             </GlassCard>
