@@ -5,6 +5,20 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import AzureADProvider from "next-auth/providers/azure-ad"
 
+const requiredEnvVars = [
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "NEXTAUTH_SECRET",
+    "DATABASE_URL"
+];
+
+for (const envVar of requiredEnvVars) {
+    if (!process.env[envVar]) {
+        console.warn(`[WARNING] Missing environment variable: ${envVar}`);
+        // throw new Error(`Missing environment variable: ${envVar}`);
+    }
+}
+
 export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET || "dev-secret-please-change-in-production",
     adapter: PrismaAdapter(db),
@@ -53,6 +67,13 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
             allowDangerousEmailAccountLinking: true,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
         }),
         AzureADProvider({
             clientId: process.env.AZURE_AD_CLIENT_ID || "mock_azure_id",

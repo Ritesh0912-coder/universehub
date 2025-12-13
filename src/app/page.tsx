@@ -36,9 +36,7 @@ export default async function Home() {
 
       <GlassHero />
 
-      {/* Top Banner Area (Optional - currently empty) */}
-      <div className="mt-4 px-4 max-w-7xl mx-auto hidden">
-      </div>
+
 
       {/* Main Content Grid */}
       <section className="max-w-7xl mx-auto px-4 pb-20">
