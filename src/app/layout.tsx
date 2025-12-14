@@ -15,6 +15,12 @@ export const metadata: Metadata = {
   description: "Real-time space news, missions, planets, and universe updates.",
   icons: {
     icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/favicon.ico',
+    },
   },
 };
 
