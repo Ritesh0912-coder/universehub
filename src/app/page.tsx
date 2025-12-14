@@ -59,12 +59,21 @@ export default async function Home() {
           <GlassCard className="col-span-1 md:col-span-12 relative h-full min-h-[500px] group overflow-hidden">
             {apodData && (
               <>
-                <Image
-                  src={apodData.url}
-                  alt={apodData.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                {apodData.media_type === "video" ? (
+                  <iframe
+                    src={`${apodData.url}?autoplay=1&mute=1&controls=0&loop=1&playlist=${apodData.url.split('/').pop()}`}
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                ) : (
+                  <Image
+                    src={apodData.url}
+                    alt={apodData.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
                 <div className="absolute bottom-0 left-0 p-8 w-full">

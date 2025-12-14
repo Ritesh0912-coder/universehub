@@ -14,14 +14,15 @@ export const metadata: Metadata = {
   title: "UniverseHub – Explore the Infinite",
   description: "Real-time space news, missions, planets, and universe updates.",
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/globe.svg',
+    shortcut: '/globe.svg',
+    apple: '/globe.svg',
     other: {
       rel: 'apple-touch-icon-precomposed',
-      url: '/favicon.ico',
+      url: '/globe.svg',
     },
   },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
