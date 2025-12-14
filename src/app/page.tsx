@@ -19,7 +19,7 @@ export const revalidate = 3600; // Revalidate every hour
 export default async function Home() {
   const [newsData, nextLaunchesRaw, featuredMissions, hiddenNewsIds, recentApods] = await Promise.all([
 
-    getSpaceNews(12),
+    getSpaceNews(18),
     getGlobalUpcomingLaunches(),
     db.mission.findMany({
       where: { status: "ACTIVE" },
