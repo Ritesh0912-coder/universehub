@@ -101,6 +101,7 @@ export default async function Home() {
                     src={article.image_url || "/images/placeholder-news.jpg"}
                     alt={article.title}
                     fill
+                    unoptimized
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
