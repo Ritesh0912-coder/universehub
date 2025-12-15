@@ -93,7 +93,7 @@ export default async function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {safeNewsData.results.slice(0, 12).map((article: any) => (
+          {safeNewsData.results.slice(0, 18).map((article: any) => (
             <Link href={article.url} key={article.id} target="_blank" rel="noopener noreferrer" className="block h-full">
               <GlassCard className="h-full flex flex-col group hover:border-cyan-500/50 transition-colors duration-300">
                 <div className="relative h-48 w-full overflow-hidden">
