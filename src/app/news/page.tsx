@@ -39,19 +39,27 @@ export default async function NewsPage({
         source: "UniverseHub",
         publishedAt: item.publishedAt,
         url: `/news/${item.id}`,
+        originalUrl: item.url, // Keep track of original URL for dedup
         isLocal: true
     }));
 
-    const externalNews = apiData.results.map((item: any) => ({
-        id: `ext-${item.id}`,
-        title: item.title,
-        summary: item.summary,
-        imageUrl: item.image_url,
-        source: item.news_site,
-        publishedAt: new Date(item.published_at),
-        url: item.url,
-        isLocal: false
-    }));
+    // Create a Set of existing URLs to prevent duplicates
+    // Normalize by stripping protocols or trailing slashes if strictly needed, 
+    // but usually direct comparison works for exact syncs.
+    const existingUrls = new Set(dbNews.map(n => n.url));
+
+    const externalNews = apiData.results
+        .filter((item: any) => !existingUrls.has(item.url)) // Deduplicate: Skip if already in DB
+        .map((item: any) => ({
+            id: `ext-${item.id}`,
+            title: item.title,
+            summary: item.summary,
+            imageUrl: item.image_url,
+            source: item.news_site,
+            publishedAt: new Date(item.published_at),
+            url: item.url,
+            isLocal: false
+        }));
 
     // 5. Merge, Filter & Sort
     let allNews = [...localNews, ...externalNews]
