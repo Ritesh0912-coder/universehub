@@ -5,9 +5,9 @@ import Link from "next/link";
 import { Github, Twitter, Youtube, Rocket } from "lucide-react";
 
 export default function Footer() {
-    const pathname = usePathname();
+    // const pathname = usePathname();
 
-    if (pathname === '/login') return null;
+    // if (pathname === '/login') return null;
 
     return (
         <footer className="border-t border-white/5 bg-black/40 backdrop-blur-md relative z-10 mt-auto">
@@ -51,7 +51,7 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
-                    <p>&copy; {new Date().getFullYear()} UniverseHub. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} UniverseHub. All rights reserved. By Ritesh Shinde</p>
                     <div className="flex gap-6">
                         <span className="hover:text-gray-400 cursor-pointer transition-colors">Privacy Policy</span>
                         <span className="hover:text-gray-400 cursor-pointer transition-colors">Terms of Service</span>

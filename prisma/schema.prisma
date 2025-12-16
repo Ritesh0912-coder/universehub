@@ -63,9 +63,11 @@ model VerificationToken {
 
 model News {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  externalId  String?  @unique // ID from external API (e.g. Spaceflight News)
   title       String
   summary     String?
-  content     String
+  content     String? // Made optional as external news might just be a link
+  url         String? // Link to original article
   imageUrl    String?
   source      String?
   category    String?

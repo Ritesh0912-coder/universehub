@@ -10,11 +10,18 @@ interface LaunchCardProps {
 }
 
 const FALLBACK_IMAGES = [
-    "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2070&auto=format&fit=crop", // Falcon 9 / Generic Rocket
+    "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2070&auto=format&fit=crop", // Falcon 9
     "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?q=80&w=2070&auto=format&fit=crop", // Lift off
     "https://images.unsplash.com/photo-1614728853975-69c960772552?q=80&w=2071&auto=format&fit=crop", // Moon/Space
     "https://images.unsplash.com/photo-1457364887197-9150188c107b?q=80&w=2070&auto=format&fit=crop", // Nebula
     "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=2072&auto=format&fit=crop", // Orbit
+    "https://images.unsplash.com/photo-1541185933-717852c42243?q=80&w=1000&auto=format&fit=crop", // Starship
+    "https://images.unsplash.com/photo-1460186136353-977e9d6085a1?q=80&w=2070&auto=format&fit=crop", // Space Tech
+    "https://images.unsplash.com/photo-1545153976-59997dad640d?q=80&w=2071&auto=format&fit=crop", // Aurora
+    "https://images.unsplash.com/photo-1636819488524-1f019c4e1c44?q=80&w=2070&auto=format&fit=crop", // Galaxy
+    "https://images.unsplash.com/photo-1518364538800-6bae3c2db0f2?q=80&w=2070&auto=format&fit=crop", // Satellites
+    "https://images.unsplash.com/photo-1454789548728-85d2696ddbcd?q=80&w=2070&auto=format&fit=crop", // Astronaut
+    "https://images.unsplash.com/photo-1543722530-d187f18026f5?q=80&w=2070&auto=format&fit=crop", // Deep Space
 ];
 
 function getLaunchImage(launch: any) {
@@ -23,14 +30,24 @@ function getLaunchImage(launch: any) {
         return launch.links.flickr.original[0];
     }
 
-    // 2. Try Rocket Specific Matches (Simple Text Search)
+    // 2. Try Patch (Large)
+    if (launch.links?.patch?.large) {
+        return launch.links.patch.large;
+    }
+
+    // 3. Try Rocket Specific Matches (Simple Text Search)
     const rocketName = (typeof launch.rocket === 'string' ? launch.rocket : launch.rocket?.name || "").toLowerCase();
-
     if (rocketName.includes("starship")) return "https://images.unsplash.com/photo-1541185933-717852c42243?q=80&w=1000&auto=format&fit=crop";
-    if (rocketName.includes("heavy")) return "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?q=80&w=2070&auto=format&fit=crop";
 
-    // 3. Deterministic Fallback based on Launch Name length
-    const index = (launch.name?.length || 0) % FALLBACK_IMAGES.length;
+    // 4. Robust Hashing for Consistency
+    // Use ID if available, otherwise Name
+    const seed = launch.id || launch.name || "default";
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+
+    const index = Math.abs(hash) % FALLBACK_IMAGES.length;
     return FALLBACK_IMAGES[index];
 }
 

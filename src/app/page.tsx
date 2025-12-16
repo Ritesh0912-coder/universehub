@@ -3,7 +3,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import GlassButton from "@/components/ui/GlassButton";
 import ImageTrail from "@/components/ui/ImageTrail";
 import { getAPOD, getRecentAPODs } from "@/lib/nasa";
-import { getSpaceNews } from "@/lib/news";
+import { getSpaceNews, getArchivedNews, syncSpaceNews } from "@/lib/news";
 import { getGlobalUpcomingLaunches } from "@/lib/launch_service";
 import { getBlacklist } from "@/lib/actions";
 import Link from "next/link";
@@ -17,9 +17,20 @@ import GoogleAdSense from "@/components/GoogleAdSense";
 export const revalidate = 3600; // Revalidate every hour
 
 export default async function Home() {
-  const [newsData, nextLaunchesRaw, featuredMissions, hiddenNewsIds, recentApods] = await Promise.all([
+  // Try to get archived news first
+  // Check if we need to sync (if DB is empty OR latest news is stale > 24h)
+  const latestNews = await db.news.findFirst({ orderBy: { updatedAt: 'desc' } });
+  const isStale = !latestNews || (new Date().getTime() - new Date(latestNews.updatedAt).getTime() > 24 * 60 * 60 * 1000);
 
-    getSpaceNews(18),
+  if (isStale) {
+    console.log("News is stale or empty, syncing...");
+    await syncSpaceNews();
+  }
+
+  // Fetch archived news for display
+  let newsData = await getArchivedNews(50);
+
+  const [nextLaunchesRaw, featuredMissions, hiddenNewsIds, recentApods] = await Promise.all([
     getGlobalUpcomingLaunches(),
     db.mission.findMany({
       where: { status: "ACTIVE" },

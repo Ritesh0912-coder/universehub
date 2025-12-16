@@ -23,13 +23,7 @@ export default function Navbar() {
 
     const isAdmin = session?.user?.email === 'admin@universe.io' || session?.user?.role === 'ADMIN';
 
-    const dynamicNavItems = [
-        ...navItems,
-        {
-            name: session ? (isAdmin ? 'ADMIN' : 'PROFILE') : 'LOGIN',
-            href: session ? (isAdmin ? '/admin' : '/dashboard') : '/login'
-        }
-    ];
+    const dynamicNavItems = navItems;
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -71,14 +65,7 @@ export default function Navbar() {
                                 )} />
                             </Link>
                         ))}
-                        {session && (
-                            <button
-                                onClick={() => signOut()}
-                                className="text-xs font-bold tracking-[0.2em] transition-colors text-red-500 hover:text-red-400"
-                            >
-                                LOGOUT
-                            </button>
-                        )}
+
                     </div>
 
                     {/* Mobile Menu Button */}
