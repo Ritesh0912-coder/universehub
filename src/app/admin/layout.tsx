@@ -42,6 +42,9 @@ export default async function AdminLayout({
                     <Link href="/admin/users" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors">
                         Personnel
                     </Link>
+                    <Link href="/admin/messages" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors">
+                        Messages
+                    </Link>
                     <Link href="/" className="block px-4 py-2 rounded-md hover:bg-white/10 transition-colors text-blue-300 mt-8 border-t border-white/10 pt-4">
                         ← Return to Earth
                     </Link>
