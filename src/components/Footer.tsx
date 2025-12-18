@@ -2,7 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Github, Twitter, Youtube, Rocket } from "lucide-react";
+import { Github, Twitter, Youtube } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
     // const pathname = usePathname();
@@ -19,9 +20,13 @@ export default function Footer() {
 
                     {/* Brand Section */}
                     <div className="flex flex-col items-center md:items-start space-y-4">
-                        <div className="flex items-center gap-2 group cursor-pointer">
-                            <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
-                                <Rocket className="w-6 h-6 text-blue-400" />
+                        <div className="flex items-center gap-3 group cursor-pointer">
+                            <div className="p-1.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                                <img
+                                    src="/favicon.ico"
+                                    alt="UniverseHub Logo"
+                                    className="w-8 h-8 object-contain"
+                                />
                             </div>
                             <h3 className="text-2xl font-orbitron font-bold text-white tracking-widest">
                                 UNIVERSE<span className="text-blue-500">HUB</span>
