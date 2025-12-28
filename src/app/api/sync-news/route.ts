@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { syncSpaceNews } from "@/lib/news";
 
+// Prevent static generation - this is a dynamic API route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET() {
     try {
         console.log("Manual sync triggered via API...");
