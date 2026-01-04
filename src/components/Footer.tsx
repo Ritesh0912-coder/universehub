@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 
 export default function Footer() {
@@ -117,7 +116,7 @@ export default function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
-                    <p>&copy; {new Date().getFullYear()} UniverseHub. All rights reserved. By Ritesh Shinde</p>
+                    <p>&copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> UniverseHub. All rights reserved. By Ritesh Shinde</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-gray-400 cursor-pointer transition-colors">Privacy Policy</Link>
                         <Link href="/terms" className="hover:text-gray-400 cursor-pointer transition-colors">Terms of Service</Link>

@@ -25,7 +25,7 @@ export default function TermsOfServicePage() {
                         Terms of Service
                     </h1>
                     <p className="text-gray-400 text-lg">
-                        Rules of Engagement for the Cosmos. Effective Date: {mounted ? new Date().toLocaleDateString() : "Loading..."}
+                        Rules of Engagement for the Cosmos. Effective Date: {mounted ? "Jan 4, 2026" : "Loading..."}
                     </p>
                 </div>
 

@@ -20,7 +20,12 @@ for (const envVar of requiredEnvVars) {
 }
 
 export const authOptions: NextAuthOptions = {
-    secret: process.env.NEXTAUTH_SECRET || "dev-secret-please-change-in-production",
+    secret: (() => {
+        if (!process.env.NEXTAUTH_SECRET) {
+            console.warn("[AUTH] NEXTAUTH_SECRET is not defined. Using insecure fallback. This will cause JWT decryption errors if you recently added a secret to your .env file.");
+        }
+        return process.env.NEXTAUTH_SECRET || "dev-secret-please-change-in-production";
+    })(),
     adapter: PrismaAdapter(db),
     providers: [
         CredentialsProvider({

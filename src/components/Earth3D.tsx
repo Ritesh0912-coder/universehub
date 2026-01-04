@@ -29,12 +29,16 @@ function RealisticEarth({
 }) {
     const cloudsRef = useRef<any>();
 
-    // Load textures
-    const [colorMap, specularMap, cloudsMap] = useLoader(TextureLoader, [
+    // Load textures with reliable fallbacks
+    const textureUrls = [
         "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg",
         "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg",
         "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_clouds_1024.png"
-    ]);
+    ];
+
+    const [colorMap, specularMap, cloudsMap] = useLoader(TextureLoader, textureUrls, (loader) => {
+        // Optional: could add cross-origin or other settings here
+    });
 
     useFrame(({ clock }) => {
         const elapsedTime = clock.getElapsedTime();

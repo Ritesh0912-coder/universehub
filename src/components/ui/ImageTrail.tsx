@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 
 function lerp(a: number, b: number, n: number): number {
@@ -1190,6 +1190,37 @@ interface ImageTrailProps {
     variant?: number;
 }
 
+interface TrailImageProps {
+    url: string;
+    index: number;
+}
+
+function TrailImage({ url, index }: TrailImageProps) {
+    const [imgSrc, setImgSrc] = useState(url);
+
+    return (
+        <div
+            className="content__img w-[190px] aspect-[1.1] rounded-[15px] absolute top-0 left-0 opacity-0 overflow-hidden [will-change:transform,filter]"
+            key={index}
+        >
+            <div
+                className="content__img-inner bg-center bg-cover w-[calc(100%+20px)] h-[calc(100%+20px)] absolute top-[-10px] left-[-10px]"
+                style={{ backgroundImage: `url(${imgSrc})` }}
+            />
+            {/* Hidden img to catch errors */}
+            <img
+                src={url}
+                className="hidden"
+                alt=""
+                onError={() => {
+                    // If remote image fails, use a high-quality local-looking Unsplash fallback
+                    setImgSrc("https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop");
+                }}
+            />
+        </div>
+    );
+}
+
 export default function ImageTrail({ items = [], variant = 1 }: ImageTrailProps): JSX.Element {
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -1203,15 +1234,7 @@ export default function ImageTrail({ items = [], variant = 1 }: ImageTrailProps)
     return (
         <div className="w-full h-full relative z-[100] rounded-lg bg-transparent overflow-visible" ref={containerRef}>
             {items.map((url, i) => (
-                <div
-                    className="content__img w-[190px] aspect-[1.1] rounded-[15px] absolute top-0 left-0 opacity-0 overflow-hidden [will-change:transform,filter]"
-                    key={i}
-                >
-                    <div
-                        className="content__img-inner bg-center bg-cover w-[calc(100%+20px)] h-[calc(100%+20px)] absolute top-[-10px] left-[-10px]"
-                        style={{ backgroundImage: `url(${url})` }}
-                    />
-                </div>
+                <TrailImage key={i} url={url} index={i} />
             ))}
         </div>
     );

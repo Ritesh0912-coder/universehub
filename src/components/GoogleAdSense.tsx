@@ -14,11 +14,10 @@ interface GoogleAdSenseProps {
 export default function GoogleAdSense({ pId, style, className, slot, format = "auto", responsive = "true" }: GoogleAdSenseProps) {
     return (
         <div className={className}>
-            <Script
+            <script
                 async
                 src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${pId}`}
                 crossOrigin="anonymous"
-                strategy="lazyOnload"
             />
             {slot && (
                 <>

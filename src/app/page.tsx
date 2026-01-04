@@ -7,10 +7,7 @@ import { getSpaceNews, getArchivedNews, syncSpaceNews, ensureNewsUpdate } from "
 import { getGlobalUpcomingLaunches } from "@/lib/launch_service";
 import { getBlacklist } from "@/lib/actions";
 import Link from "next/link";
-import { ArrowRight, Calendar, ExternalLink, Rocket, Globe } from "lucide-react";
-import Image from "next/image";
 import { db } from "@/lib/db";
-import GoogleAdSense from "@/components/GoogleAdSense";
 import NewsGridItem from "@/components/NewsGridItem";
 
 
@@ -43,7 +40,6 @@ export default async function Home() {
     safeNewsData.results = safeNewsData.results.filter((item: any) => !hiddenNewsIds.includes(`ext-${item.id}`));
   }
 
-  const nextLaunches = nextLaunchesRaw.slice(0, 3);
 
 
 

@@ -25,7 +25,7 @@ export default function PrivacyPolicyPage() {
                         Privacy Policy
                     </h1>
                     <p className="text-gray-400 text-lg">
-                        Guardian of your cosmic data. Effective Date: {mounted ? new Date().toLocaleDateString() : "Loading..."}
+                        Guardian of your cosmic data. Effective Date: {mounted ? "Jan 4, 2026" : "Loading..."}
                     </p>
                 </div>
 

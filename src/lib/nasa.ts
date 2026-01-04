@@ -3,13 +3,26 @@ export const API_KEY = process.env.NEXT_PUBLIC_NASA_API_KEY || "DEMO_KEY";
 
 export async function getAPOD() {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
         const res = await fetch(`${NASA_API_BASE}/planetary/apod?api_key=${API_KEY}`, {
             next: { revalidate: 3600 }, // Cache for 1 hour
+            signal: controller.signal
         });
-        if (!res.ok) throw new Error("Failed to fetch APOD");
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+            const errorText = await res.text().catch(() => "Unknown error");
+            throw new Error(`Failed to fetch APOD: ${res.status} ${errorText}`);
+        }
         return res.json();
-    } catch (error) {
-        console.error("APOD Error:", error);
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.error("APOD Error: Request timed out");
+        } else {
+            console.error("APOD Error:", error.message || error);
+        }
         return null;
     }
 }
@@ -20,25 +33,34 @@ export async function getRecentAPODs(days: number = 10) {
         startDate.setDate(startDate.getDate() - days);
         const dateStr = startDate.toISOString().split('T')[0];
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout for range
+
         const res = await fetch(`${NASA_API_BASE}/planetary/apod?api_key=${API_KEY}&start_date=${dateStr}`, {
             next: { revalidate: 3600 },
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
 
         if (!res.ok) {
-            const errorText = await res.text();
+            const errorText = await res.text().catch(() => "Unknown error");
             console.error(`NASA API Error (${res.status}):`, errorText);
 
             // If rate limited or API error, return empty array to use fallback images
-            if (res.status === 429 || res.status === 403) {
-                console.warn('NASA API rate limit reached. Using fallback images.');
+            if (res.status === 429 || res.status === 403 || res.status >= 500) {
+                console.warn(`NASA API issue (${res.status}). Using fallback images.`);
             }
             return [];
         }
 
         const data = await res.json();
         return data;
-    } catch (error) {
-        console.error("Recent APOD Error:", error);
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.error("Recent APOD Error: Request timed out");
+        } else {
+            console.error("Recent APOD Error:", error.message || error);
+        }
         // Return empty array to trigger fallback images in gallery
         return [];
     }
