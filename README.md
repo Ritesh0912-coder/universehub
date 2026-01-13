@@ -80,14 +80,6 @@ Follow these steps to set up the project locally.
     NEXTAUTH_URL="http://localhost:3000"
     NEXTAUTH_SECRET="your-super-secret-key"
 
-    # Providers
-    GOOGLE_CLIENT_ID="..."
-    GOOGLE_CLIENT_SECRET="..."
-
-    # APIs
-    UNSPLASH_ACCESS_KEY="..."
-    ```
-
 4.  **Database Setup**
     Push the schema to your MongoDB instance:
     ```bash
